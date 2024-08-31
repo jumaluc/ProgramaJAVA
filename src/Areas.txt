@@ -1,0 +1,6 @@
+1;RR.HH.;true
+2;Direccion;false
+3;Administracion;true
+4;Ventas;false
+5;Produccion;false
+6;Contabilidad;true

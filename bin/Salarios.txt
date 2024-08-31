@@ -1,0 +1,15 @@
+1  10001.01    A 5 true
+2  25060.88    A 30true
+3  142242.11   B 30true
+4  4000.53     B 31true
+5  50050.25    C 1 false
+6  9000.14     C 30false
+7  94000.14    A 29true
+8  91000.14    B 1 true
+9  1000.00     D 1 false
+10 1500.00     D 1 false
+11 2000.00     D 2 false
+12 1999.00     D 3 false
+13 2005.00     D 31false
+
+
