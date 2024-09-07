@@ -20,27 +20,27 @@ import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
-
+import javax.swing.table.DefaultTableModel;
 import controlador.AreasControlador;
 import controlador.SalariosControlador;
-
+import java.awt.Color;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
-import java.util.ArrayList;  
-
+import java.util.ArrayList;
+import java.util.Calendar;  
 public class Ventana  implements ActionListener, ItemListener{
-
 	private PersonalControlador personalControlador = new PersonalControlador();
     private JFrame ventana = new JFrame();
     private JMenuBar barraMenu = new JMenuBar();
     private JMenu menu = new JMenu("Operaciones");  
     private JMenu menu2 = new JMenu("Estadisticas");
     private JMenu menu3 = new JMenu("Sistema");
-    private JMenu menu4 = new JMenu("Salir");
+    private JMenu  menuSalir= new JMenu("Salir");
+    private JMenuItem itemSalir = new JMenuItem("Salir");
 
     //Operaciones
     private JMenu menu5 = new JMenu("Ingreso");
@@ -49,16 +49,19 @@ public class Ventana  implements ActionListener, ItemListener{
     private JMenuItem itemOperaciones2 = new JMenuItem("Consulta y Actualizacion");
     private JMenuItem itemOperaciones3 = new JMenuItem("Consulta masiva");
     private JMenuItem itemSistema = new JMenuItem("Acerca de...");
-    
+    private JMenuItem itemValorA = new JMenuItem("Valor A");
+    private JMenuItem itemValorB = new JMenuItem("Valor B");
+    private JMenuItem itemValorC = new JMenuItem("Valor C");
+
 	private String personal;
 	private SalariosControlador salariosControlador = new SalariosControlador();
     private AreasControlador areasControlador = new AreasControlador();
 
     // INGRESO 
     private JPanel panelIngreso = new JPanel();
-    private JTextArea texto = new JTextArea("Ventana para el ingreso del Personal, es importante que \n"
-            + "tenga en cuenta solo se pueden ingresar gerentes o empleados \n"
-            + "y que hay que especificarlo. Ingresar nombre, apellido, dni, areas involucradas, contrato");
+    private JTextArea texto = new JTextArea("Ventana para el ingreso del Personal\n"
+            + "Se debera ingresar el nombre, apellido, dni, areas involucradas, tipo de contrato,\n"
+            + "sueldo por mes, genero. Dependiendo del tipo del personal debera ingresar otros datos");
 
     private JLabel labelNombre = new JLabel("Nombre: ");
     private JTextField textNombre = new JTextField(20);
@@ -83,7 +86,6 @@ public class Ventana  implements ActionListener, ItemListener{
     JScrollPane scroll = new JScrollPane(listaDinamica);
     private JButton buttonCopiar = new JButton("Copiar-->");
     JScrollPane scroll2;
-
     private JList<String> listaEstatica;
 
     //RADIO BUTTON
@@ -94,7 +96,6 @@ public class Ventana  implements ActionListener, ItemListener{
     private ButtonGroup rbGrupoPersonal = new ButtonGroup(); 
     
     //CHECK BOX GERENTE 
-    
     private JPanel panelCheckBoxGerente = new JPanel();
     private JLabel lbActividades = new JLabel("Actividades: ");
     private JCheckBox chActividad1 = new JCheckBox("Planificacion");
@@ -105,7 +106,6 @@ public class Ventana  implements ActionListener, ItemListener{
 
     
     //RADIO BUTTON CON 1 X DEFECTO GERENTE
-    
     private JPanel  panelRadioEdificioGerente = new JPanel();
     private JLabel lbEdificio = new JLabel("Edificio: ");
     private JRadioButton rbPrincipal = new JRadioButton("Principal");
@@ -117,7 +117,6 @@ public class Ventana  implements ActionListener, ItemListener{
     private JTextField textBonificacion = new JTextField(20);
     
     //CHECK BOX EMPLEADO
-    
     private JPanel panelRadioDiasLaboralesEmpleados = new JPanel();
     private JLabel lbDiasLaborales = new JLabel("Dias Laborales: ");
     private JCheckBox chLunes = new JCheckBox("Lunes");
@@ -159,234 +158,302 @@ public class Ventana  implements ActionListener, ItemListener{
     //CONSULTA MASIVA 
     
     private JPanel panelConsultaMasiva = new JPanel();
-    private JLabel lbPersonalConsultaM = new JLabel("Tipo de personal: ");
+    private JLabel lbPersonalConsultaM = new JLabel("Tipo de personal ('gerente' o 'empleado'): ");
     private JTextField textoPersonalConsultaM = new JTextField(20);
-    private JLabel lbGeneroConsultaM = new JLabel("Genero: ");
+    private JLabel lbGeneroConsultaM = new JLabel("Genero ('hombre','mujer'): ");
     private JTextField textoGeneroConsultaM = new JTextField(20);
+    private JLabel lbRegistrosVisualizadosM = new JLabel("Registros visualizados: ");
+    private JTextArea textoRegistrosVisualizadosM = new JTextArea();
+    private JLabel lbRegistrosExistentesM = new JLabel("Registros existentes: ");
+    private JTextArea textoRegistrosExistentesM = new JTextArea();
+    private JButton btBuscarConsultaM = new JButton("Buscar");
     private JTable tblPersonal;
     
+    //SISTEMA 
+    private JPanel panelSistema = new JPanel();
+    private JLabel lbSistema = new JLabel("SISTEMA ");
+    private JLabel lbNombreSistema = new JLabel("Nombre sistema: ");
+    private JTextField textoNombreSistema = new JTextField(20);
+    private JLabel lbVersionSistema = new JLabel("Version: ");
+    private JTextField textoVersionSistema = new JTextField(20);
+    private JLabel lbAñoSistema = new JLabel("Año: ");
+    private JTextField textoAñoSistema = new JTextField(20);
+    private JLabel lbAutorSistema = new JLabel("Autor: ");
+    private JTextField textoAutorSistema = new JTextField(20);
     
+    //ESTADISTICA
+    private JPanel panelEstadisticasA = new JPanel();
+    private JPanel panelEstadisticasB = new JPanel();
+    private JPanel panelEstadisticasC = new JPanel();
+    private JLabel lbValorAEstadisticas = new JLabel("Valor A");
+    private JTextField textoValorAEstadisticas = new JTextField(20);
+    private JLabel lbValorBEstadisticas = new JLabel("Valor B");
+    private JTable tblValorBEstadisticas;
+    private JLabel lbValorCEstadisticas = new JLabel("Valor C");
+    private JTextField textoValorCEstadisticas = new JTextField(20);
     
-    public Ventana() {
-    	
+    private String arg;
+    public Ventana(String arg) {
+    	this.arg = arg;
     	crearVentana();
     	crearMenuBar();
-               
-    }
-
+    	crearPanelIngreso();
+    	crearPanel1();
+    	crearListasDesplegables();
+    	crearListas();
+    	crearRadioButtonGerentes();
+    	crearCheckBoxGerentes();
+    	crearRadioButtonXDefectoGerentes();
+    	crearCheckBoxEmpleados();
+    	crearRadioButtonXDefectoEmpleados();
+    	crearBotonesMandar();
+    	crearPanelConsultaYActualizacion();
+    	crearPanelConsultaMasiva();
+    	crearPanelSistema();
+    	crearPanelEstadisticas();
+    	crearPanelSistema();
+    	}
     public void crearVentana() {
         ventana.setSize(800, 800);
-        ventana.setTitle("Sistema de Empleados");
+        ventana.setTitle("Sistema de Personal");
         ventana.setLayout(new FlowLayout());
         ventana.setVisible(true);
+        ventana.getContentPane().setBackground(new Color(255,220,211));
+	    ventana.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
     }
-    public void crearMenuBar() {
-        
-				 //itemOperaciones.addActionListener(this);
-		 		 menu.add(menu5);
-
-				 menu.add(itemOperaciones2);
-				 itemOperaciones2.addActionListener(this);
-				 menu.add(itemOperaciones3);
-				 itemOperaciones3.addActionListener(this);
-				 barraMenu.add(menu);
-				 barraMenu.add(menu2);
-				 barraMenu.add(menu3);
-				 barraMenu.add(menu4);
-				
-				 menu5.add(itemOperacionesG);
-				 menu5.add(itemOperacionesE);
-				 
-				 itemOperacionesG.addActionListener(this);;
-				 itemOperacionesE.addActionListener(this);
-				 
-				 
-				 //PANEL 1
-				 	panel1.setLayout(new BoxLayout(panel1, BoxLayout.Y_AXIS));
-			     	panel1.setSize(500, 300);
-			     	texto.setEditable(false);
-			     	panel1.add(texto);
-			        panel1.add(labelNombre);
-			        panel1.add(textNombre);
-			        panel1.add(labelApellido);
-			        panel1.add(textApellido);
-			        panel1.add(lbDni);
-			        panel1.add(textDni);
-			        
-			        panel1.setVisible(true);
-				 
-				 //LISTAS DESPLEGABLES 
-			    	panelListasDesplegables.setSize(200, 200);
-			    	listaDesplegableEstatica = new JComboBox(salariosControlador.devolveTiposSalarios());
-			    	listaDesplegableEstatica.addItemListener(this);
-			    	panelListasDesplegables.add(lbTipoContrato);
-			        panelListasDesplegables.add(listaDesplegableEstatica);
-			        listaDesplegableDependiente = new JComboBox<String>();
-			        panelListasDesplegables.add(listaDesplegableDependiente);
-			        listaDesplegableDependiente.setVisible(false);
-			        listaDesplegableEstatica.addItemListener(this);
-			        panelListasDesplegables.setLayout(new FlowLayout());
-			        
-			        panelListasDesplegables.setVisible(true);
-			        
-			        
-			      
-			      //LISTAS
-			        
-			        panelListas.setLayout(new GridLayout(1, 3));
-			        panelListas.setSize(200,200);
-			        listaDinamica.setVisibleRowCount(4);
-			        panelListas.add(lbArea);
-			        listaDinamica.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-			        listaDinamica.setFixedCellWidth(85);
-			        listaDinamica.setFixedCellHeight(15);
-			        panelListas.add(scroll);
-			        panelListas.add(buttonCopiar);
-
-			        buttonCopiar.addActionListener(this);
-
-			        modelo = new DefaultListModel<String>();
-			        listaEstatica = new JList<String>(modelo);
-			        listaEstatica.setFixedCellWidth(85);
-			        listaEstatica.setFixedCellHeight(15);
-			        listaEstatica.setVisibleRowCount(4);
-			        listaEstatica.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-			        scroll2 = new JScrollPane(listaEstatica);
-			        panelListas.add(scroll2);
-
-			        panelListas.setVisible(true);
-			      
-			      //RADIO BUTTON
-			        
-			    	panelRadioPersonal.add(lbPersonal);
-			    	rbGrupoPersonal.add(rbHombre);
-			    	rbGrupoPersonal.add(rbMujer);
-			    	panelRadioPersonal.add(rbHombre);
-			    	panelRadioPersonal.add(rbMujer);
-			    	
-			    	panelRadioPersonal.setLayout(new FlowLayout());
-			    	
-			    	panelRadioPersonal.setVisible(true);
-			    	
-				 //CHECK BOX GERENTES
-			    	panelCheckBoxGerente.add(lbActividades);
-			    	panelCheckBoxGerente.add(chActividad1);
-			    	panelCheckBoxGerente.add(chActividad2);
-			    	panelCheckBoxGerente.add(chActividad3);
-			    	panelCheckBoxGerente.add(chActividad4);
-			    	panelCheckBoxGerente.add(chActividad5);
-			    	
-			    	panelCheckBoxGerente.setVisible(false);
-				 
-			    //RADIO BUTTON CON 1 X DEFECTO GERENTES
-			    	
-			    	rbGrupoEdificio.add(rbPrincipal);
-			    	rbPrincipal.setSelected(true);
-			    	rbGrupoEdificio.add(rbSector1);
-			    	rbGrupoEdificio.add(rbSector2);
-			    	panelRadioEdificioGerente.add(lbEdificio);
-			    	panelRadioEdificioGerente.add(rbPrincipal);
-			    	panelRadioEdificioGerente.add(rbSector1);
-			    	panelRadioEdificioGerente.add(rbSector2);
-			    	panelRadioEdificioGerente.add(lbBonificacion);
-			    	panelRadioEdificioGerente.add(textBonificacion);
-			    	panelRadioEdificioGerente.setVisible(false);
-			    	
-			    	
-			    //CHECK BOX EMPLEADOS EMPLEADOS
-			    	
-			    	panelRadioDiasLaboralesEmpleados.add(lbDiasLaborales);
-			    	panelRadioDiasLaboralesEmpleados.add(chLunes);
-			    	panelRadioDiasLaboralesEmpleados.add(chMartes);
-			    	panelRadioDiasLaboralesEmpleados.add(chMiercoles);
-			    	panelRadioDiasLaboralesEmpleados.add(chJueves);
-			    	panelRadioDiasLaboralesEmpleados.add(chViernes);
-			    	panelRadioDiasLaboralesEmpleados.add(chSabado);
-			    	panelRadioDiasLaboralesEmpleados.add(chDomingo);
-			    	panelRadioDiasLaboralesEmpleados.setVisible(false);
-			   
-			    //RADIO BUTTON CON 1 X DEFECTO EMPLEADOS
-			    	
-			    	rbGrupoTrayectoria.add(rbTrainee);
-			    	rbGrupoTrayectoria.add(rbJunior);
-			    	rbGrupoTrayectoria.add(rbSenior);
-			    	panelRadioTrayectoria.add(lbTrayectoria);
-			    	panelRadioTrayectoria.add(rbTrainee);
-			    	panelRadioTrayectoria.add(rbJunior);
-			    	panelRadioTrayectoria.add(rbSenior);
-			    	rbTrainee.setSelected(true);
-			    	panelRadioTrayectoria.setVisible(false);
-			    				    	
-			   
-			   //BOTONES MANDAR
-			    	
-			    	panelBotones.add(btAceptar);
-			    	panelBotones.add(btCancelar);
-			    	btAceptar.addActionListener(this);
-			    	btCancelar.addActionListener(this);
-			    	panelBotones.setVisible(true);
-			    
-			    //CONSULTA Y ACTUALIZACION
-			    	
-			    	panelConsultaYActualizacion.add(lbBuscador);
-			    	panelConsultaYActualizacion.add(textBuscador);
-			    	btBuscar.addActionListener(this);
-			    	panelConsultaYActualizacion.setVisible(false);
-			    	panelConsultaYActualizacion.setLayout(new BoxLayout(panelConsultaYActualizacion, BoxLayout.Y_AXIS));
-			    	btEditar.addActionListener(this);
-			    	btAnular.addActionListener(this);
-			    	panelBotonesConsulta.add(btBuscar);
-			    	panelBotonesConsulta.add(btEditar);
-			    	panelBotonesConsulta.add(btAnular);
-			    	panelBotonesConsulta.setLayout(new FlowLayout());
-			    	panelConsultaYActualizacion.add(panelBotonesConsulta);
-			    	btEditar.setVisible(false);
-			    	btAnular.setVisible(false);
-			    	panelBotonesConsulta.add(btAceptarEditar);
-			    	panelBotonesConsulta.add(btCancelarEditar);
-			    	btAceptarEditar.addActionListener(this);
-			    	btAceptarEditar.setVisible(false);
-			    	btCancelarEditar.addActionListener(this);
-			    	btCancelarEditar.setVisible(false);
-			    	ventana.add(panelConsultaYActualizacion);
-
-			    //CONSULTA MASIVA 
-			    	
-			    	panelConsultaMasiva.add(lbPersonalConsultaM);
-			    	panelConsultaMasiva.add(textoPersonalConsultaM);
-			    	panelConsultaMasiva.add(lbGeneroConsultaM);
-			    	panelConsultaMasiva.add(textoGeneroConsultaM);
-			    	String[] titulosColumnas = {"Personal","Nombre","Apellido","DNI","Tipo Contrato","Sueldo","Genero"};
-			    	String[][] valores = personalControlador.devolverMatrizPersonal();
-			    	tblPersonal = new JTable(valores, titulosColumnas);
-			    	JScrollPane scrollPane = new JScrollPane(tblPersonal);
-			    	panelConsultaMasiva.add(lbPersonalConsultaM);
-			    	panelConsultaMasiva.add(textoPersonalConsultaM);
-			    	panelConsultaMasiva.add(lbGeneroConsultaM);
-			    	panelConsultaMasiva.add(textoGeneroConsultaM);
-			    	panelConsultaMasiva.add(scrollPane);  
-
-			    	panelConsultaMasiva.setVisible(false);
-			    	ventana.add(panelConsultaMasiva);
-			    	
-				 menu3.add(itemSistema);
-				 panelIngreso.add(panel1);
-				 panelIngreso.add(panelListasDesplegables);
-				 panelIngreso.add(panelListas);
-				 panelIngreso.add(panelRadioPersonal);
-				 panelIngreso.add(panelCheckBoxGerente);
-				 panelIngreso.add(panelRadioEdificioGerente);
-				 panelIngreso.add(panelRadioDiasLaboralesEmpleados);
-				 panelIngreso.add(panelRadioTrayectoria);
-				 panelIngreso.setVisible(false);
-				 panelIngreso.setLayout(new BoxLayout(panelIngreso, BoxLayout.Y_AXIS));
-
-				 
-				 
-				 panelIngreso.add(panelBotones);
-				 ventana.add(panelIngreso);
-			     ventana.setJMenuBar(barraMenu);
-			     ventana.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+    public void crearMenuBar() {    
+		menu.add(menu5);
+		barraMenu.setBackground(Color.gray);
+		menu.add(itemOperaciones2);
+		itemOperaciones2.addActionListener(this);
+		menu.add(itemOperaciones3);
+		itemOperaciones3.addActionListener(this);
+		barraMenu.add(menu);
+		barraMenu.add(menu2);
+		menu2.add(itemValorA);itemValorA.addActionListener(this);
+		menu2.add(itemValorB);itemValorB.addActionListener(this);
+		menu2.add(itemValorC);itemValorC.addActionListener(this);
+		barraMenu.add(menu3);
+		menuSalir.add(itemSalir);
+	    itemSalir.addActionListener(this);
+		barraMenu.add(menuSalir);
+		menu5.add(itemOperacionesG);
+		menu5.add(itemOperacionesE);
+		menu3.add(itemSistema);
+		itemSistema.addActionListener(this);
+		itemOperacionesG.addActionListener(this);;
+		itemOperacionesE.addActionListener(this);
+		ventana.setJMenuBar(barraMenu);		
+    }
+    public void crearPanelIngreso() {
+		 panelIngreso.add(panel1);
+		 panelIngreso.add(panelListasDesplegables);
+		 panelIngreso.add(panelListas);
+		 panelIngreso.add(panelRadioPersonal);
+		 panelIngreso.add(panelCheckBoxGerente);
+		 panelIngreso.add(panelRadioEdificioGerente);
+		 panelIngreso.add(panelRadioDiasLaboralesEmpleados);
+		 panelIngreso.add(panelRadioTrayectoria);
+		 panelIngreso.setVisible(false);
+		 panelIngreso.setLayout(new BoxLayout(panelIngreso, BoxLayout.Y_AXIS));
+		 panelIngreso.setBackground(Color.blue);
+		 panelIngreso.add(panelBotones);
+		 ventana.add(panelIngreso);
+    }
+    public void crearPanel1() {
+	 	panel1.setLayout(new BoxLayout(panel1, BoxLayout.Y_AXIS));
+     	panel1.setSize(500, 300);
+     	texto.setEditable(false);
+     	panel1.add(texto);
+        panel1.add(labelNombre);
+        panel1.add(textNombre);
+        panel1.add(labelApellido);
+        panel1.add(textApellido);
+        panel1.add(lbDni);
+        panel1.add(textDni);
+        panel1.setVisible(true);
+    }
+    public void crearListasDesplegables() {
+    	panelListasDesplegables.setSize(200, 200);
+    	listaDesplegableEstatica = new JComboBox(salariosControlador.devolveTiposSalarios());
+    	listaDesplegableEstatica.addItemListener(this);
+    	panelListasDesplegables.add(lbTipoContrato);
+        panelListasDesplegables.add(listaDesplegableEstatica);
+        listaDesplegableDependiente = new JComboBox<String>();
+        panelListasDesplegables.add(listaDesplegableDependiente);
+        listaDesplegableDependiente.setVisible(false);
+        listaDesplegableEstatica.addItemListener(this);
+        panelListasDesplegables.setLayout(new FlowLayout());      
+        panelListasDesplegables.setVisible(true);
+    }
+    public void crearListas() {
+        panelListas.setLayout(new GridLayout(1, 3));
+        panelListas.setSize(200,200);
+        listaDinamica.setVisibleRowCount(4);
+        panelListas.add(lbArea);
+        listaDinamica.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+        listaDinamica.setFixedCellWidth(85);
+        listaDinamica.setFixedCellHeight(15);
+        panelListas.add(scroll);
+        panelListas.add(buttonCopiar);
+        buttonCopiar.addActionListener(this);
+        modelo = new DefaultListModel<String>();
+        listaEstatica = new JList<String>(modelo);
+        listaEstatica.setFixedCellWidth(85);
+        listaEstatica.setFixedCellHeight(15);
+        listaEstatica.setVisibleRowCount(4);
+        listaEstatica.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+        scroll2 = new JScrollPane(listaEstatica);
+        panelListas.add(scroll2);
+        panelListas.setVisible(true);
+    }
+    public void crearRadioButtonGerentes() {
+    	panelRadioPersonal.add(lbPersonal);
+    	rbGrupoPersonal.add(rbHombre);
+    	rbGrupoPersonal.add(rbMujer);
+    	panelRadioPersonal.add(rbHombre);
+    	panelRadioPersonal.add(rbMujer);
+    	panelRadioPersonal.setLayout(new FlowLayout());
+    	panelRadioPersonal.setVisible(true);
+    }
+    public void crearCheckBoxGerentes() {
+    	panelCheckBoxGerente.add(lbActividades);
+    	panelCheckBoxGerente.add(chActividad1);
+    	panelCheckBoxGerente.add(chActividad2);
+    	panelCheckBoxGerente.add(chActividad3);
+    	panelCheckBoxGerente.add(chActividad4);
+    	panelCheckBoxGerente.add(chActividad5);
+    	panelCheckBoxGerente.setVisible(false);
+    }
+    public void crearRadioButtonXDefectoGerentes() {
+    	rbGrupoEdificio.add(rbPrincipal);
+    	rbPrincipal.setSelected(true);
+    	rbGrupoEdificio.add(rbSector1);
+    	rbGrupoEdificio.add(rbSector2);
+    	panelRadioEdificioGerente.add(lbEdificio);
+    	panelRadioEdificioGerente.add(rbPrincipal);
+    	panelRadioEdificioGerente.add(rbSector1);
+    	panelRadioEdificioGerente.add(rbSector2);
+    	panelRadioEdificioGerente.add(lbBonificacion);
+    	panelRadioEdificioGerente.add(textBonificacion);
+    	panelRadioEdificioGerente.setVisible(false);
+    }
+    public void crearCheckBoxEmpleados() {
+    	panelRadioDiasLaboralesEmpleados.add(lbDiasLaborales);
+    	panelRadioDiasLaboralesEmpleados.add(chLunes);
+    	panelRadioDiasLaboralesEmpleados.add(chMartes);
+    	panelRadioDiasLaboralesEmpleados.add(chMiercoles);
+    	panelRadioDiasLaboralesEmpleados.add(chJueves);
+    	panelRadioDiasLaboralesEmpleados.add(chViernes);
+    	panelRadioDiasLaboralesEmpleados.add(chSabado);
+    	panelRadioDiasLaboralesEmpleados.add(chDomingo);
+    	panelRadioDiasLaboralesEmpleados.setVisible(false);
+    }
+    public void crearRadioButtonXDefectoEmpleados() {
+    	rbGrupoTrayectoria.add(rbTrainee);
+    	rbGrupoTrayectoria.add(rbJunior);
+    	rbGrupoTrayectoria.add(rbSenior);
+    	panelRadioTrayectoria.add(lbTrayectoria);
+    	panelRadioTrayectoria.add(rbTrainee);
+    	panelRadioTrayectoria.add(rbJunior);
+    	panelRadioTrayectoria.add(rbSenior);
+    	rbTrainee.setSelected(true);
+    	panelRadioTrayectoria.setVisible(false);
+    }
+    public void crearBotonesMandar() {
+    	panelBotones.add(btAceptar);
+    	panelBotones.add(btCancelar);
+    	btAceptar.addActionListener(this);
+    	btCancelar.addActionListener(this);
+    	panelBotones.setVisible(true);
+    }
+    public void crearPanelConsultaYActualizacion() {
+    	panelConsultaYActualizacion.setBackground(Color.red);
+    	panelConsultaYActualizacion.add(lbBuscador);
+    	panelConsultaYActualizacion.add(textBuscador);
+    	btBuscar.addActionListener(this);
+    	panelConsultaYActualizacion.setVisible(false);
+    	panelConsultaYActualizacion.setLayout(new BoxLayout(panelConsultaYActualizacion, BoxLayout.Y_AXIS));
+    	btEditar.addActionListener(this);
+    	btAnular.addActionListener(this);
+    	panelBotonesConsulta.add(btBuscar);
+    	panelBotonesConsulta.add(btEditar);
+    	panelBotonesConsulta.add(btAnular);
+    	panelBotonesConsulta.setLayout(new FlowLayout());
+    	panelConsultaYActualizacion.add(panelBotonesConsulta);
+    	btEditar.setVisible(false);
+    	btAnular.setVisible(false);
+    	panelBotonesConsulta.add(btAceptarEditar);
+    	panelBotonesConsulta.add(btCancelarEditar);
+    	btAceptarEditar.addActionListener(this);
+    	btAceptarEditar.setVisible(false);
+    	btCancelarEditar.addActionListener(this);
+    	btCancelarEditar.setVisible(false);
+    	ventana.add(panelConsultaYActualizacion);
+    }
+    public void crearPanelConsultaMasiva() {
+    	panelConsultaMasiva.add(lbPersonalConsultaM);
+    	panelConsultaMasiva.add(textoPersonalConsultaM);
+    	panelConsultaMasiva.add(lbGeneroConsultaM);
+    	panelConsultaMasiva.add(textoGeneroConsultaM);
+    	String[] titulosColumnas = {"Personal","Nombre","Apellido","DNI","Tipo Contrato","Sueldo","Genero"};
+    	tblPersonal = new JTable(personalControlador.devolverMatrizPersonal1("","") , titulosColumnas);
+    	JScrollPane scrollPane = new JScrollPane(tblPersonal);
+    	panelConsultaMasiva.add(lbPersonalConsultaM);
+    	panelConsultaMasiva.add(textoPersonalConsultaM);
+    	panelConsultaMasiva.add(lbGeneroConsultaM);
+    	panelConsultaMasiva.add(textoGeneroConsultaM);
+    	panelConsultaMasiva.add(btBuscarConsultaM);
+    	panelConsultaMasiva.add(lbRegistrosVisualizadosM);
+    	panelConsultaMasiva.add(textoRegistrosVisualizadosM);
+    	textoRegistrosVisualizadosM.setEditable(false);
+    	panelConsultaMasiva.add(lbRegistrosExistentesM);
+    	panelConsultaMasiva.add(textoRegistrosExistentesM);
+    	textoRegistrosExistentesM.setEditable(false);
+    	btBuscarConsultaM.addActionListener(this);
+    	panelConsultaMasiva.add(scrollPane);  
+    	panelConsultaMasiva.setLayout(new BoxLayout(panelConsultaMasiva, BoxLayout.Y_AXIS));
+    	panelConsultaMasiva.setVisible(false);
+    	ventana.add(panelConsultaMasiva);
+    }
+    public void crearPanelSistema() {
+    	panelSistema.add(lbSistema);
+    	panelSistema.add(lbNombreSistema);
+    	panelSistema.add(textoNombreSistema);
+    	textoNombreSistema.setEditable(false);textoNombreSistema.setText("Sistema de Personal");
+    	textoVersionSistema.setEditable(false);textoVersionSistema.setText("1.8v");
+    	textoAñoSistema.setEditable(false);textoAñoSistema.setText(Integer.toString(Calendar.getInstance().get(Calendar.YEAR)));
+    	textoAutorSistema.setEditable(false);textoAutorSistema.setText("Juan Martin Carschenboim");
+    	panelSistema.add(lbVersionSistema);
+    	panelSistema.add(textoVersionSistema);
+    	panelSistema.add(lbAñoSistema);
+    	panelSistema.add(textoAñoSistema);
+    	panelSistema.add(lbAutorSistema);
+    	panelSistema.add(textoAutorSistema);
+    	panelSistema.setVisible(false);
+    	panelSistema.setLayout(new BoxLayout(panelSistema, BoxLayout.Y_AXIS));
+    	ventana.add(panelSistema);
+    }
+    public void crearPanelEstadisticas() {
+    	panelEstadisticasA.add(lbValorAEstadisticas);
+    	panelEstadisticasA.add(textoValorAEstadisticas);textoValorAEstadisticas.setEditable(false);
+    	panelEstadisticasB.add(lbValorBEstadisticas);
+    	String[] col = {"id","Dni", "Sueldo", "Dia Pago"}; 
+    	tblValorBEstadisticas = new JTable(personalControlador.estadisticasValorB(arg), col);
+    	JScrollPane scrollPaneEstadisticas = new JScrollPane(tblValorBEstadisticas);
+    	panelEstadisticasB.add(scrollPaneEstadisticas);
+    	panelEstadisticasC.add(lbValorCEstadisticas);
+    	panelEstadisticasC.add(textoValorCEstadisticas);textoValorCEstadisticas.setEditable(false);
+    	panelEstadisticasA.setVisible(false);
+    	panelEstadisticasA.setLayout(new BoxLayout(panelEstadisticasA, BoxLayout.Y_AXIS));
+    	panelEstadisticasB.setVisible(false);
+    	panelEstadisticasB.setLayout(new BoxLayout(panelEstadisticasB, BoxLayout.Y_AXIS));
+    	panelEstadisticasC.setVisible(false);
+    	panelEstadisticasC.setLayout(new BoxLayout(panelEstadisticasC, BoxLayout.Y_AXIS));
+    	ventana.add(panelEstadisticasA);
+    	ventana.add(panelEstadisticasB);
+    	ventana.add(panelEstadisticasC);
     }
     
 
@@ -397,9 +464,49 @@ public class Ventana  implements ActionListener, ItemListener{
     
     @Override
     public void actionPerformed(ActionEvent e) {
-    	if(e.getSource() == itemOperaciones3) {
-    		panelConsultaMasiva.setVisible(true);
+    	if(e.getSource() == itemValorA) {
+    		setVisiblePanel("estadisticasA");
+    		textoValorAEstadisticas.setText(personalControlador.estadisticasValorA());
+    		
     	}
+    	if(e.getSource() == itemValorB) {
+    		setVisiblePanel("estadisticasB");
+	    	String[] col = {"id","Dni", "Sueldo", "Dia Pago"}; 
+    		DefaultTableModel modeloValorB = new DefaultTableModel(personalControlador.estadisticasValorB(arg), col);
+    		tblValorBEstadisticas.setModel(modeloValorB);
+    		
+    	}
+    	if(e.getSource() == itemValorC) {
+    		setVisiblePanel("estadisticasC");
+    		textoValorCEstadisticas.setText(personalControlador.estadisticasValorC());
+    	}
+    	if(e.getSource() == itemSistema) {
+    		setVisiblePanel("sistema");
+
+    	}
+    	if(e.getSource() == itemSalir) {
+            int respuesta = JOptionPane.showConfirmDialog(null, "SALIR DE LA APLICACION", "Salir", JOptionPane.OK_CANCEL_OPTION);
+            System.out.println("salir");
+            if (respuesta == JOptionPane.OK_OPTION) {
+            	ventana.dispose();
+            }
+            else if (respuesta == JOptionPane.CANCEL_OPTION) {
+            	
+            }
+            }                	
+    	if(e.getSource() == itemOperaciones3 || e.getSource() == btBuscarConsultaM) {
+    		setVisiblePanel("consultaMasiva");
+    		String personal = textoPersonalConsultaM.getText();
+    		System.out.println("-personal : "+personal);
+    		String genero = textoGeneroConsultaM.getText();
+    		String[] titulosColumnas = {"Personal", "Nombre", "Apellido", "DNI", "Tipo Contrato", "Sueldo", "Género"};
+    		String[][] nuevosValores = personalControlador.devolverMatrizPersonal1(personal, genero);
+    		DefaultTableModel nuevoModelo = new DefaultTableModel(nuevosValores, titulosColumnas);
+    		tblPersonal.setModel(nuevoModelo);
+    		textoRegistrosVisualizadosM.setText(Integer.toString(nuevoModelo.getRowCount()));
+    		textoRegistrosExistentesM.setText(Integer.toString(personalControlador.cantRegistrosExistentes()));
+    	}
+
     	if(e.getSource() == btAnular) {
     		String dniBuscar = textBuscador.getText();
     		int dni = Integer.parseInt(dniBuscar);
@@ -417,8 +524,7 @@ public class Ventana  implements ActionListener, ItemListener{
 
     	}
     	if(e.getSource() ==itemOperaciones2) {
-    		panelConsultaYActualizacion.setVisible(true);
-    		panelIngreso.setVisible(false);
+    		setVisiblePanel("consultaActualizacion");
     	}
     	if(e.getSource() == btBuscar) {
     		String dniBuscar = textBuscador.getText();
@@ -599,27 +705,24 @@ public class Ventana  implements ActionListener, ItemListener{
     	}
     	
     	if(e.getSource() == itemOperacionesG) {
-    		limpiarCamposIngreso();
-    		 habilitarCamposIngreso();
+    		habilitarCamposIngreso();
+    		setVisiblePanel("ingreso"); 
     		panelConsultaYActualizacion.setVisible(false);
-
     		personal="gerente";
             panelRadioDiasLaboralesEmpleados.setVisible(false);
-            panelRadioTrayectoria.setVisible(false);
-            panelIngreso.setVisible(true);   
+            panelRadioTrayectoria.setVisible(false);  
             panelCheckBoxGerente.setVisible(true);
             panelRadioEdificioGerente.setVisible(true);
 
     	}
     	else if(e.getSource() == itemOperacionesE) {
-    		limpiarCamposIngreso();
-    		 habilitarCamposIngreso() ;
-    		personal="empleado";
-    		panelConsultaYActualizacion.setVisible(false);
 
+
+    		habilitarCamposIngreso() ;
+    		personal="empleado";
+    		setVisiblePanel("ingreso"); 
             panelCheckBoxGerente.setVisible(false);
             panelRadioEdificioGerente.setVisible(false);
-            panelIngreso.setVisible(true);  
             panelRadioDiasLaboralesEmpleados.setVisible(true);
             panelRadioTrayectoria.setVisible(true);
     	}
@@ -638,9 +741,7 @@ public class Ventana  implements ActionListener, ItemListener{
                     continue;
                 } else {
                     modelo.addElement((String) el);
-
                 }
-
             }
         }
         if(e.getSource() == btAceptar) {
@@ -653,9 +754,6 @@ public class Ventana  implements ActionListener, ItemListener{
     
     @Override
     public void itemStateChanged(ItemEvent e) {
-    	
-
-    	
     	if(e.getSource() == listaDesplegableEstatica) {
     		String seleccionado = (String)listaDesplegableEstatica.getSelectedItem();
     		String [] contenidoDependiente = salariosControlador.devolverSalarios(seleccionado);
@@ -664,7 +762,6 @@ public class Ventana  implements ActionListener, ItemListener{
     			listaDesplegableDependiente.addItem(s);
     		}
     		listaDesplegableDependiente.setVisible(true);   		    		
-    		
     	}
     }
     
@@ -721,7 +818,9 @@ public class Ventana  implements ActionListener, ItemListener{
 
     		}
     		catch(ExcepcionPropia e) {
+
     			JOptionPane.showMessageDialog(null, e.getMessage());
+    			return;
     		}
     		JOptionPane.showMessageDialog(null, "Finalizado correctamente!");
     		limpiarCamposIngreso();
@@ -749,19 +848,40 @@ public class Ventana  implements ActionListener, ItemListener{
     		}
     		catch(ExcepcionPropia e) {
     			JOptionPane.showMessageDialog(null, e.getMessage());
+    			return;
     		}
     		JOptionPane.showMessageDialog(null, "Empleado agregado correctamente!");
     		limpiarCamposIngreso();
     	}
     	
     }
+    public void setVisiblePanel(String panel) {
+    	panelIngreso.setVisible(false);
+    	panelConsultaYActualizacion.setVisible(false);
+    	panelConsultaMasiva.setVisible(false);
+    	panelEstadisticasA.setVisible(false);
+    	panelEstadisticasB.setVisible(false);
+    	panelEstadisticasC.setVisible(false);
+    	panelSistema.setVisible(false);
+    	if(panel.equals("ingreso")) {panelIngreso.setVisible(true);limpiarCamposIngreso();}
+    	else if(panel.equals("consultaActualizacion"))panelConsultaYActualizacion.setVisible(true);
+    	else if(panel.equals("consultaMasiva"))panelConsultaMasiva.setVisible(true);
+    	else if(panel.equals("estadisticasA"))panelEstadisticasA.setVisible(true);
+    	else if(panel.equals("estadisticasB"))panelEstadisticasB.setVisible(true);
+    	else if(panel.equals("estadisticasC"))panelEstadisticasC.setVisible(true);
+    	else if(panel.equals("sistema"))panelSistema.setVisible(true);
+
+    }
     public void limpiarCamposIngreso() {
+    	textoPersonalConsultaM.setText("");
+    	textoGeneroConsultaM.setText("");
     	textNombre.setText("");
     	textApellido.setText("");
     	listaDesplegableEstatica.setSelectedIndex(0);
     	textDni.setText("");
     	textBonificacion.setText("");
     	modelo.clear();
+    	textBuscador.setText("");
     	listaEstatica.clearSelection();
     	rbHombre.setSelected(false);
     	rbMujer.setSelected(false);
@@ -786,7 +906,7 @@ public class Ventana  implements ActionListener, ItemListener{
     }
     public void habilitarCamposIngreso() {
         panelIngreso.setVisible(false);   
-        
+        	
 			texto.setVisible(true);
 			lbDni.setVisible(true);
 			textNombre.setEditable(true);
@@ -794,6 +914,7 @@ public class Ventana  implements ActionListener, ItemListener{
    			textApellido.setText("");
 			textApellido.setEditable(true);
 			textDni.setVisible(true);
+			textDni.setEditable(true);			
 			listaDesplegableEstatica.setEnabled(true);
 			listaDesplegableEstatica.setSelectedIndex(0);
 			listaDesplegableDependiente.setEnabled(true);

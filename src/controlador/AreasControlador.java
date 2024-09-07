@@ -25,6 +25,13 @@ public class AreasControlador {
 	public  String [] devolverAreasNombre() {
 		return listNombreAreas;
 	}
+	public  ArrayList<String> devolverAreasNombreList() {
+		ArrayList<String> lista = new ArrayList<String>();
+		for(Areas a : listAreas) {
+			lista.add(a.getNombreArea());
+		}
+		return lista;
+	}
 	public ArrayList<Areas> devolverAreasSeleccionadas(ArrayList<String> areas) {
 		ArrayList<Areas> areasSeleccionadas = new ArrayList<Areas>();
 		for(String s : areas) {

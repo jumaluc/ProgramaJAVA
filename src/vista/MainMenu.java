@@ -5,12 +5,12 @@ public class MainMenu {
 	
 	private AreasControlador areasControlador = new AreasControlador();
 	
-	public MainMenu() {
+	public MainMenu(String arg) {
 		
 	
 		new SalariosControlador();
 		
-		new Ventana();
+		new Ventana(arg);
 		
 		
 	}

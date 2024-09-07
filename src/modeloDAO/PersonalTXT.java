@@ -1,12 +1,10 @@
 package modeloDAO;
 import modelo.*;
-import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Scanner;
 
 public class PersonalTXT {
 
@@ -41,6 +39,7 @@ public class PersonalTXT {
 				escribir.print(s+",");
 			}
 			escribir.print(personal+";");
+			escribir.print("\n");
 			if(tipo == 1) escribir.print(bon);
 			
 			escribir.close();

@@ -1,33 +1,32 @@
 package controlador;
-import modelo.*;
 import java.util.ArrayList;
 import java.util.Calendar;
-
+import java.util.Collections;
+import java.util.Random;
 import modelo.Areas;
 import modelo.Empleados;
 import modelo.Gerentes;
 import modelo.Personal;
 import modeloDAO.PersonalTXT;
+import modeloDAO.ValorBJSON;
 
 public class PersonalControlador {
-
+	private ValorBJSON valorBJSON = new ValorBJSON();
 	private ArrayList<Personal> personalList= new ArrayList<Personal>(); 
 	private AreasControlador areasControlador = new AreasControlador();
 	private SalariosControlador salariosContralador = new SalariosControlador();
 	private PersonalTXT personalTXT = new PersonalTXT();
-	
+	private int id = 0;
 	public void cargarPersonal(String nombre, String apellido, String tipoContrato, String sueldo, 
 			ArrayList<String> areas, ArrayList<String> a, String b, String genero, String dni,String bonificacion, int tipo, boolean editado) throws ExcepcionPropia{
-		try {
-					
+						
 			char tipoContratoChar = tipoContrato.charAt(0);
 			double sueldoDouble = Double.parseDouble(sueldo.substring(0, sueldo.length()-1).trim());
 			ArrayList<Areas> areasList = areasControlador.devolverAreasSeleccionadas(areas);
-			System.out.println("DNI : "+dni);
 			int dniInt = Integer.parseInt(dni.trim());
 			
 			if(verificarRepetido(dniInt) && !editado) {
-				throw new ExcepcionPropia("Esta persona ya esta ingresado en el sistema!");
+				throw new ExcepcionPropia("ERROR. Ese DNI ya esta ingresado en el sistema!");
 			}
 			Calendar fechaHoy = Calendar.getInstance();
 			double bon=0;
@@ -43,11 +42,12 @@ public class PersonalControlador {
 					}
 				}
 				else {
-					Personal gerente = new Gerentes(personalList.size(), nombre, apellido, fechaHoy, areasList, dniInt , genero, a,b);
+					Personal gerente = new Gerentes(id, nombre, apellido, fechaHoy, areasList, dniInt , genero, a,b);
 					gerente.setContrato(salariosContralador.devolverSalarioSeleccionado(sueldoDouble, tipoContratoChar), personalList.size()+100);
 					if(bon!=0)Gerentes.setBonificacionInicial(bon);
 					personalTXT.cargarPersonalTXT(personalList.size(), nombre, apellido, fechaHoy, areasList, dniInt, genero, a, b, tipo, bon);
 					personalList.add(gerente);
+					id++;
 				}
 
 	
@@ -62,22 +62,22 @@ public class PersonalControlador {
 					}
 				}
 				else {
-					Personal empleado = new Empleados(personalList.size(), nombre, apellido, fechaHoy, areasList, dniInt, genero, a, b);
+					Personal empleado = new Empleados(id, nombre, apellido, fechaHoy, areasList, dniInt, genero, a, b);
 					empleado.setContrato(salariosContralador.devolverSalarioSeleccionado(sueldoDouble, tipoContratoChar), personalList.size()+100);
 					personalTXT.cargarPersonalTXT(personalList.size(), nombre, apellido, fechaHoy, areasList, dniInt, genero, a, b, tipo, bon);
 					personalList.add(empleado);
+					id++;
+
 				}
 
 			}						
-		}
-		catch(Exception e) {
-			e.printStackTrace();
-		}
+
 		
 		
 		
 	}
 	public boolean verificarRepetido(int dni) {
+
 		for(Personal p : personalList) {
 			if(p.getDni() == dni) {
 				return true;
@@ -87,7 +87,6 @@ public class PersonalControlador {
 		
 	}
 	public int[] encontrarPersonal(int dni) {
-		int[] array = new int[2];
 		for(Personal p : personalList) {
 			if(p.getDni() == dni) {
 				if(p instanceof Gerentes) {
@@ -181,28 +180,92 @@ public class PersonalControlador {
 		}
 
 	}
-	public String[][] devolverMatrizPersonal() {
-		String [][] matriz = new String[7][personalList.size()];
-		System.out.println("aaaaa");
-		for(int i = 0 ; i<personalList.size() ; i++) {
-			if(personalList.get(i) instanceof Gerentes) matriz[i][0] = "Gerente";
-			else matriz[i][0] = "Empleado";
-			matriz[i][1] = personalList.get(i).getNombre(); 
-			matriz[i][2] = personalList.get(i).getApellido();
-			matriz[i][3] = Integer.toString(personalList.get(i).getDni());
-			matriz[i][4] = String.valueOf(personalList.get(i).getContrato().getSalario().getTipo());
-			matriz[i][5] = Double.toString(personalList.get(i).getContrato().getSalario().getSueldo());
-			matriz[i][6] = personalList.get(i).getGenero();
-			System.out.println(matriz[i][1]);
-			System.out.println(matriz[i][2]);
-			System.out.println(matriz[i][3]);
-			System.out.println(matriz[i][4]);
-			System.out.println(matriz[i][5]);
-			System.out.println(matriz[i][6]);
 
+
+	public String[][] devolverMatrizPersonal1(String personal, String genero) {
+		ArrayList<String[]> personalListMatriz = new ArrayList<String[]>();
+		String tipo = "";
+		Collections.sort(personalList);
+		for(Personal p : personalList) {
+			if(p instanceof Gerentes) tipo = "Gerente";
+			else tipo = "Empleado";
+			personalListMatriz.add(new String[] {tipo, p.getNombre(), p.getApellido(), Integer.toString(p.getDni()), String.valueOf(p.getContrato().getSalario().getTipo()),Double.toString(p.getContrato().getSalario().getSueldo()), p.getGenero()});
 		}
-		return matriz;
+	    if (!personal.isEmpty()) {
+	    	System.out.println("a");
+	       boolean res  = personalListMatriz.removeIf(registro -> !registro[0].toLowerCase().contains(personal));
+	       System.out.println("borro ? : "+res);
+	    }
+	    if (!genero.isEmpty()) {
+	    	System.out.println("b");
+	    	 boolean res  =personalListMatriz.removeIf(registro -> !registro[6].toLowerCase().contains(genero));
+		    System.out.println("borro ? : "+res);
+
+	    }
+		
+		return generarMatriz(personalListMatriz);
 		
 	}
+	public String[][] generarMatriz(ArrayList<String[]> list){
+		if(list.size() == 0) {
+			return new String[][] {};
+		}
+		String[][] matriz = new String[list.size()][list.get(0).length];
+		for(int i = 0 ; i < list.size() ; i++) {
+			for(int j = 0 ; j<list.get(i).length ; j++) {
+				matriz[i][j] = list.get(i)[j];
+			}
+		}
+		return matriz;
+	}
+	public int cantRegistrosExistentes() {
+		return personalList.size();
+	}
+	public String estadisticasValorA() {
+		double valorNumerico = 0 ; 
+		Calendar fechaHoy = Calendar.getInstance();
+		fechaHoy.add(Calendar.MONTH, -6);
+		for(Personal p : personalList) {
+			if(p instanceof Gerentes) {
+				if(((Gerentes)p).getActividades().size() == 5  && p.getFechaIngreso().after(fechaHoy)) {
+					valorNumerico += p.getContrato().getSalario().getSueldo();
+				}
+				
+			}
+			if(p instanceof Empleados) {
+				if(((Empleados)p).getDiasLaborales().size() == 7 && p.getFechaIngreso().after(fechaHoy)) {
+					valorNumerico += p.getContrato().getSalario().getSueldo();
+
+				}
+			}
+		}
+		return Double.toString(valorNumerico);
+	}
+	public String[][] estadisticasValorB(String arg) {
+		ArrayList<String[]> arrayMatriz = new ArrayList<String[]>();
+		for(Personal p : personalList) {
+			p.getAreasList().forEach(a -> System.out.println(a.getNombreArea()));
+			if(!p.getAreasList().contains(arg)) {
+				System.out.println("Entro");
+				arrayMatriz.add(new String [] {Integer.toString(p.getId()), Integer.toString(p.getDni()), Double.toString(p.getContrato().getSalario().getSueldo()), Integer.toString(p.getContrato().getSalario().getDiaPaga())});
+				valorBJSON.escribirJSONSTREAMING(p.getId(),p.getDni(), p.getContrato().getSalario().getSueldo(), p.getContrato().getSalario().getDiaPaga());
+			}
+		}
+		return generarMatriz(arrayMatriz);
+		
+	}
+	public String estadisticasValorC() {
+		int cantidad = 0;
+		Random random = new Random();
+		double randomNum = random.nextDouble() * 100000;
+		for(Personal p : personalList) {
+			if(p.getDni() + p.getContrato().getSalario().getSueldo() < randomNum) {
+				cantidad++;
+			}
+		}
+		return Integer.toString(cantidad);
+	}
+
+
 }
 

@@ -3,7 +3,7 @@ package modelo;
 import java.util.ArrayList;
 import java.util.Calendar;
 
-public class Personal{
+public class Personal implements Comparable<Personal>{
 
     protected int id; 
     protected String nombre;
@@ -13,7 +13,6 @@ public class Personal{
     protected Contrato contrato;
     protected int dni;
     protected String genero;
-    
     
     
 	public int getDni() {
@@ -76,6 +75,10 @@ public class Personal{
 		this.areasList = areasList;
 		this.dni = dni;
 		this.genero = genero;
+	}
+	@Override
+	public int compareTo(Personal o) {
+		return Integer.compare(this.dni, o.dni);
 	}
 
 
